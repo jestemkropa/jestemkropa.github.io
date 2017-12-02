@@ -1,27 +1,23 @@
 /*
-	Spectral by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+	Snapshot by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
 */
 
 (function($) {
 
-	skel
-		.breakpoints({
-			xlarge:	'(max-width: 1680px)',
-			large:	'(max-width: 1280px)',
-			medium:	'(max-width: 980px)',
-			small:	'(max-width: 736px)',
-			xsmall:	'(max-width: 480px)'
-		});
+	skel.breakpoints({
+		xlarge: '(max-width: 1680px)',
+		large: '(max-width: 1280px)',
+		medium: '(max-width: 980px)',
+		small: '(max-width: 736px)',
+		xsmall: '(max-width: 480px)'
+	});
 
 	$(function() {
 
 		var	$window = $(window),
-			$body = $('body'),
-			$wrapper = $('#page-wrapper'),
-			$banner = $('#banner'),
-			$header = $('#header');
+			$body = $('body');
 
 		// Disable animations/transitions until the page has loaded.
 			$body.addClass('is-loading');
@@ -31,18 +27,6 @@
 					$body.removeClass('is-loading');
 				}, 100);
 			});
-
-		// Mobile?
-			if (skel.vars.mobile)
-				$body.addClass('is-mobile');
-			else
-				skel
-					.on('-medium !medium', function() {
-						$body.removeClass('is-mobile');
-					})
-					.on('+medium', function() {
-						$body.addClass('is-mobile');
-					});
 
 		// Fix: Placeholder polyfill.
 			$('form').placeholder();
@@ -56,44 +40,64 @@
 			});
 
 		// Scrolly.
-			$('.scrolly')
-				.scrolly({
-					speed: 1500,
-					offset: $header.outerHeight()
-				});
+			$('.scrolly').scrolly();
 
-		// Menu.
-			$('#menu')
-				.append('<a href="#menu" class="close"></a>')
-				.appendTo($body)
-				.panel({
-					delay: 500,
-					hideOnClick: true,
-					hideOnSwipe: true,
-					resetScroll: true,
-					resetForms: true,
-					side: 'right',
-					target: $body,
-					visibleClass: 'is-menu-visible'
-				});
+		// Gallery.
+			$('.gallery').each(function() {
 
-		// Header.
-			if (skel.vars.IEVersion < 9)
-				$header.removeClass('alt');
+				var	$gallery = $(this),
+					$content = $gallery.find('.content');
 
-			if ($banner.length > 0
-			&&	$header.hasClass('alt')) {
+				// Poptrox.
+					$content.poptrox({
+						usePopupCaption: true
+					});
 
-				$window.on('resize', function() { $window.trigger('scroll'); });
+				// Tabs.
+					$gallery.each( function() {
 
-				$banner.scrollex({
-					bottom:		$header.outerHeight() + 1,
-					terminate:	function() { $header.removeClass('alt'); },
-					enter:		function() { $header.addClass('alt'); },
-					leave:		function() { $header.removeClass('alt'); }
-				});
+						var $this = $(this),
+							$tabs = $this.find('.tabs a'),
+							$media = $this.find('.media');
 
-			}
+						$tabs.on('click', function(e) {
+
+							var $this = $(this),
+								tag = $this.data('tag');
+
+							// Prevent default.
+							 	e.preventDefault();
+
+							// Remove active class from all tabs.
+								$tabs.removeClass('active');
+
+							// Reapply active class to current tab.
+								$this.addClass('active');
+
+							// Hide media that do not have the same class as the clicked tab.
+								$media
+									.fadeOut('fast')
+									.each(function() {
+
+										var $this = $(this);
+
+										if ($this.hasClass(tag))
+											$this
+												.fadeOut('fast')
+												.delay(200)
+												.queue(function(next) {
+													$this.fadeIn();
+													next();
+												});
+
+									});
+
+						});
+
+					});
+
+
+			});
 
 	});
 
